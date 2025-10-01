@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Dívidas por Banco</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Minhas Dívidas por Banco 🏦</h1>
+
+        <section class="add-bank">
+            <h2>Cadastrar Novo Banco</h2>
+            <form id="bank-form">
+                <div class="form-group">
+                    <label for="bank-name">Nome do Banco/Conta:</label>
+                    <input type="text" id="bank-name" required placeholder="Ex: Cartão Nubank, Empréstimo Itaú">
+                </div>
+                <div class="form-group">
+                    <label for="bank-color">Cor para Identificação:</label>
+                    <input type="color" id="bank-color" value="#4CAF50" required>
+                </div>
+                <button type="submit" class="btn-add">Adicionar Banco</button>
+            </form>
+        </section>
+        
+        <hr>
+
+        <section class="add-debt">
+            <h2>Adicionar Nova Dívida</h2>
+            <form id="debt-form">
+                <div class="form-group">
+                    <label for="debt-bank">Selecione o Banco:</label>
+                    <select id="debt-bank" required>
+                        <option value="">Nenhum banco cadastrado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="debt-description">Descrição da Dívida:</label>
+                    <input type="text" id="debt-description" required placeholder="Ex: Parcela do carro, Fatura de Janeiro">
+                </div>
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label for="debt-amount">Valor (R$):</label>
+                        <input type="number" id="debt-amount" step="0.01" required>
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="debt-date">Dia do Pagamento:</label>
+                        <input type="date" id="debt-date" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-add">Registrar Dívida</button>
+            </form>
+        </section>
+
+        <hr>
+
+        <section class="debt-summary">
+            <h2>Resumo das Dívidas</h2>
+            <p>Total de Dívidas Cadastradas: <strong id="total-debts">R$ 0,00</strong></p>
+            <ul id="debt-list">
+                </ul>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
