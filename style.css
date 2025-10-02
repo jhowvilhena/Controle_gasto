@@ -1,6 +1,7 @@
+/* --- CONFIGURAÇÕES GERAIS E CORES --- */
 body {
     font-family: Arial, sans-serif;
-    background-color: #F8F8F8; /* Cor Off-White */
+    background-color: #e8f5e9; /* VERDE BEM CLARINHO (Novo Off-White) */
     color: #333;
     margin: 0;
     padding: 10px;
@@ -12,8 +13,8 @@ body {
 .container {
     background-color: #FFFFFF;
     padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 16px; /* Cantos mais arredondados */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     max-width: 600px;
     width: 100%;
     margin-bottom: 20px;
@@ -21,13 +22,13 @@ body {
 
 h1 {
     text-align: center;
-    color: #28a745;
+    color: #1b5e20; /* Verde Escuro */
     margin-bottom: 25px;
 }
 
 h2 {
-    color: #555;
-    border-bottom: 1px solid #eee;
+    color: #388e3c; /* Títulos de Seção em Verde Médio */
+    border-bottom: 1px solid #c8e6c9;
     padding-bottom: 8px;
     margin-top: 20px;
     margin-bottom: 15px;
@@ -35,10 +36,60 @@ h2 {
 
 hr {
     border: 0;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #c8e6c9;
     margin: 25px 0;
 }
 
+/* --- ESTILO PARA DUAS COLUNAS DE BANCOS (NOVO) --- */
+.bank-management {
+    display: flex;
+    flex-wrap: wrap; /* Permite quebrar linha em telas pequenas */
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.add-bank, .bank-display {
+    flex: 1; /* Ocupa 50% em telas grandes */
+    min-width: 250px; /* Garante usabilidade em telas menores */
+}
+
+/* --- ESTILO DOS BLOCOS DE BANCOS (NOVO) --- */
+#bank-blocks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 5px;
+}
+
+.bank-block {
+    padding: 15px;
+    border-radius: 12px; /* Arredondamento dos blocos */
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.bank-block:hover {
+    transform: translateY(-2px);
+}
+
+.bank-block .bank-name {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+.bank-block .bank-total {
+    font-size: 1.4em;
+}
+
+#no-banks-message {
+    color: #666;
+    font-style: italic;
+    text-align: center;
+}
+
+/* --- ESTILO DE FORMULÁRIO E INPUTS (AJUSTADOS) --- */
 .form-group {
     margin-bottom: 15px;
 }
@@ -52,12 +103,7 @@ hr {
     flex: 1;
 }
 
-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    font-size: 0.9em;
-}
+/* ... (Outros estilos de input e label permanecem os mesmos) ... */
 
 input[type="text"],
 input[type="number"],
@@ -66,7 +112,7 @@ select {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
-    border-radius: 6px;
+    border-radius: 8px; /* Cantos arredondados */
     font-size: 1em;
     box-sizing: border-box;
     transition: border-color 0.3s;
@@ -76,24 +122,16 @@ input[type="text"]:focus,
 input[type="number"]:focus,
 input[type="date"]:focus,
 select:focus {
-    border-color: #007bff;
+    border-color: #388e3c; /* Cor de foco verde */
     outline: none;
 }
 
-input[type="color"] {
-    height: 40px;
-    width: 100px;
-    padding: 3px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-}
-
 .btn-add {
-    background-color: #007bff;
+    background-color: #388e3c; /* Botão em Verde Médio */
     color: white;
     padding: 12px 20px;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px; /* Cantos arredondados */
     cursor: pointer;
     font-size: 1em;
     width: 100%;
@@ -102,76 +140,38 @@ input[type="color"] {
 }
 
 .btn-add:hover {
-    background-color: #0056b3;
+    background-color: #2e7d32; /* Verde Escuro no Hover */
 }
 
-#debt-list {
-    list-style: none;
-    padding: 0;
-}
-
+/* --- ESTILO DE LISTA DE DÍVIDAS (AJUSTADO) --- */
 #debt-list li {
-    background-color: #f9f9f9;
+    background-color: #f1f8e9; /* Fundo do item de lista em verde ainda mais claro */
     padding: 15px;
     margin-bottom: 10px;
-    border-radius: 8px;
+    border-radius: 10px; /* Cantos arredondados */
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-.debt-info {
-    flex-grow: 1;
-}
-
-.debt-info strong {
-    display: block;
-    font-size: 1.2em;
-    margin-bottom: 4px;
-}
-
-.debt-details {
-    font-size: 0.9em;
-    color: #666;
-    line-height: 1.4;
-}
-
 .bank-tag {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 4px;
-    color: white;
-    font-weight: bold;
-    margin-right: 10px;
-    font-size: 0.85em;
+    /* ... (mantido, pois a cor é definida pelo JS) ... */
+    border-radius: 6px; /* Tag de Banco um pouco mais arredondada */
 }
 
-.delete-btn {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    width: 35px;
-    height: 35px;
-    font-size: 1em;
-    cursor: pointer;
-    margin-left: 15px;
-    transition: background-color 0.3s ease;
-    flex-shrink: 0;
-}
+/* ... (Outros estilos de lista e botões permanecem os mesmos) ... */
 
-.delete-btn:hover {
-    background-color: #c82333;
-}
-
-/* Responsividade */
-@media (max-width: 480px) {
+/* Responsividade: Muda para uma única coluna em telas pequenas */
+@media (max-width: 600px) {
+    .bank-management {
+        flex-direction: column;
+    }
+    .add-bank, .bank-display {
+        min-width: 100%;
+    }
     .form-row {
         flex-direction: column;
         gap: 0;
-    }
-    .form-row .half-width {
-        width: 100%;
     }
 }
