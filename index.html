@@ -10,21 +10,29 @@
     <div class="container">
         <h1>Minhas Dívidas por Banco 🏦</h1>
 
-        <section class="add-bank">
-            <h2>Cadastrar Novo Banco</h2>
-            <form id="bank-form">
-                <div class="form-group">
-                    <label for="bank-name">Nome do Banco/Conta:</label>
-                    <input type="text" id="bank-name" required placeholder="Ex: Cartão Nubank, Empréstimo Itaú">
+        <div class="bank-management">
+            <section class="add-bank">
+                <h2>Cadastrar Banco</h2>
+                <form id="bank-form">
+                    <div class="form-group">
+                        <label for="bank-name">Nome do Banco/Conta:</label>
+                        <input type="text" id="bank-name" required placeholder="Ex: Cartão Nubank, Empréstimo Itaú">
+                    </div>
+                    <div class="form-group">
+                        <label for="bank-color">Cor para Identificação:</label>
+                        <input type="color" id="bank-color" value="#108040" required>
+                    </div>
+                    <button type="submit" class="btn-add">Adicionar Banco</button>
+                </form>
+            </section>
+
+            <section class="bank-display">
+                <h2>Bancos Cadastrados</h2>
+                <div id="bank-blocks-container">
+                    <p id="no-banks-message">Nenhum banco cadastrado.</p>
                 </div>
-                <div class="form-group">
-                    <label for="bank-color">Cor para Identificação:</label>
-                    <input type="color" id="bank-color" value="#4CAF50" required>
-                </div>
-                <button type="submit" class="btn-add">Adicionar Banco</button>
-            </form>
-        </section>
-        
+            </section>
+        </div>
         <hr>
 
         <section class="add-debt">
