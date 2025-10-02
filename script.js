@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const debtList = document.getElementById('debt-list');
     const debtBankSelect = document.getElementById('debt-bank');
     const totalDebtsElement = document.getElementById('total-debts');
+    const bankBlocksContainer = document.getElementById('bank-blocks-container');
+    const noBanksMessage = document.getElementById('no-banks-message');
 
     let banks = [];
     let debts = [];
@@ -20,25 +22,62 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (storedDebts) {
             debts = JSON.parse(storedDebts);
-            renderDebts();
         }
+        renderAll(); // Chamada única para renderizar tudo
     }
 
     function saveBanks() {
         localStorage.setItem('banks', JSON.stringify(banks));
-        updateBankSelect(); // Atualiza o seletor sempre que um banco é salvo
+        updateBankSelect();
+        renderBankBlocks(); // Atualiza a visualização dos blocos
     }
 
     function saveDebts() {
         localStorage.setItem('debts', JSON.stringify(debts));
-        renderDebts();
+        renderAll();
     }
 
-    // --- Funções de Renderização e Lógica ---
+    function renderAll() {
+        renderDebts();
+        renderBankBlocks();
+    }
+
+    // --- Funções de Renderização dos Bancos (NOVA LÓGICA) ---
+
+    function renderBankBlocks() {
+        bankBlocksContainer.innerHTML = '';
+        calculateTotal(); // Garante que o total geral seja atualizado
+
+        if (banks.length === 0) {
+            noBanksMessage.style.display = 'block';
+            return;
+        }
+
+        noBanksMessage.style.display = 'none';
+
+        banks.forEach(bank => {
+            // Calcula o total de dívidas para este banco específico
+            const bankTotal = debts
+                .filter(debt => debt.bankId === bank.id)
+                .reduce((sum, debt) => sum + debt.amount, 0);
+
+            const block = document.createElement('div');
+            block.classList.add('bank-block');
+            block.style.backgroundColor = bank.color;
+
+            block.innerHTML = `
+                <div class="bank-name">${bank.name}</div>
+                <div class="bank-total">R$ ${bankTotal.toFixed(2).replace('.', ',')}</div>
+            `;
+            bankBlocksContainer.appendChild(block);
+        });
+    }
+
+    // --- Funções de Renderização e Lógica (EXISTENTES) ---
 
     function updateBankSelect() {
-        debtBankSelect.innerHTML = ''; // Limpa opções antigas
-
+        debtBankSelect.innerHTML = '';
+        
         if (banks.length === 0) {
             const option = document.createElement('option');
             option.value = '';
@@ -70,7 +109,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const bankName = bank ? bank.name : 'Banco Removido';
             const bankColor = bank ? bank.color : '#999999';
 
-            // Formata a data (DD/MM/AAAA)
             const date = new Date(debt.date + 'T00:00:00');
             const formattedDate = date.toLocaleDateString('pt-BR');
             
@@ -91,9 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
         calculateTotal();
     }
 
-    // --- Eventos ---
+    // --- Eventos (Inalterados, mas precisam dos novos elementos) ---
 
-    // 1. Cadastrar Novo Banco
     bankForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const name = document.getElementById('bank-name').value.trim();
@@ -102,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!name) return;
 
         const newBank = {
-            id: Date.now().toString(), // ID único baseado no tempo
+            id: Date.now().toString(),
             name: name,
             color: color
         };
@@ -112,7 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
         bankForm.reset();
     });
 
-    // 2. Registrar Nova Dívida
     debtForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -138,7 +174,6 @@ document.addEventListener('DOMContentLoaded', () => {
         debtForm.reset();
     });
 
-    // 3. Excluir Dívida
     debtList.addEventListener('click', (e) => {
         if (e.target.classList.contains('delete-btn')) {
             const indexToDelete = parseInt(e.target.dataset.index);
@@ -147,6 +182,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Carregar dados na inicialização
     loadData();
 });
