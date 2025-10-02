@@ -21,15 +21,19 @@ document.addEventListener('DOMContentLoaded', () => {
             updateBankSelect();
         }
         if (storedDebts) {
-            debts = JSON.parse(storedDebts);
+            // Garante que dívidas antigas sem o campo 'isPaid' recebam o valor 'false'
+            debts = JSON.parse(storedDebts).map(debt => ({
+                ...debt,
+                isPaid: debt.isPaid === undefined ? false : debt.isPaid 
+            }));
         }
-        renderAll(); // Chamada única para renderizar tudo
+        renderAll(); 
     }
 
     function saveBanks() {
         localStorage.setItem('banks', JSON.stringify(banks));
         updateBankSelect();
-        renderBankBlocks(); // Atualiza a visualização dos blocos
+        renderBankBlocks(); 
     }
 
     function saveDebts() {
@@ -40,14 +44,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAll() {
         renderDebts();
         renderBankBlocks();
+        calculateTotal(); // Garante que o total geral seja atualizado
     }
 
     // --- Funções de Renderização dos Bancos (NOVA LÓGICA) ---
 
     function renderBankBlocks() {
         bankBlocksContainer.innerHTML = '';
-        calculateTotal(); // Garante que o total geral seja atualizado
-
+        
         if (banks.length === 0) {
             noBanksMessage.style.display = 'block';
             return;
@@ -56,9 +60,9 @@ document.addEventListener('DOMContentLoaded', () => {
         noBanksMessage.style.display = 'none';
 
         banks.forEach(bank => {
-            // Calcula o total de dívidas para este banco específico
+            // Calcula o total de dívidas ATIVAS (não pagas) para este banco
             const bankTotal = debts
-                .filter(debt => debt.bankId === bank.id)
+                .filter(debt => debt.bankId === bank.id && !debt.isPaid)
                 .reduce((sum, debt) => sum + debt.amount, 0);
 
             const block = document.createElement('div');
@@ -73,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Funções de Renderização e Lógica (EXISTENTES) ---
+    // --- Funções de Renderização e Lógica ---
 
     function updateBankSelect() {
         debtBankSelect.innerHTML = '';
@@ -97,7 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function calculateTotal() {
-        const total = debts.reduce((sum, debt) => sum + debt.amount, 0);
+        // Agora calcula o total apenas das dívidas ATIVAS (não pagas)
+        const total = debts.filter(debt => !debt.isPaid).reduce((sum, debt) => sum + debt.amount, 0);
         totalDebtsElement.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
     }
 
@@ -112,6 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const date = new Date(debt.date + 'T00:00:00');
             const formattedDate = date.toLocaleDateString('pt-BR');
             
+            // Aplica a classe 'paid' se a dívida estiver paga
+            if (debt.isPaid) {
+                listItem.classList.add('paid');
+            }
+
             listItem.innerHTML = `
                 <div class="debt-info">
                     <strong>R$ ${debt.amount.toFixed(2).replace('.', ',')}</strong>
@@ -122,15 +132,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span>Vencimento: ${formattedDate}</span>
                     </div>
                 </div>
-                <button class="delete-btn" data-index="${index}">X</button>
+                <div class="debt-actions">
+                    <input type="checkbox" class="paid-checkbox" data-index="${index}" ${debt.isPaid ? 'checked' : ''}>
+                    <button class="delete-btn" data-index="${index}">X</button>
+                </div>
             `;
             debtList.appendChild(listItem);
         });
-        calculateTotal();
     }
 
-    // --- Eventos (Inalterados, mas precisam dos novos elementos) ---
+    // --- Eventos ---
 
+    // 1. Cadastrar Novo Banco (Inalterado)
     bankForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const name = document.getElementById('bank-name').value.trim();
@@ -149,6 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         bankForm.reset();
     });
 
+    // 2. Registrar Nova Dívida
     debtForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
@@ -166,7 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
             bankId: bankId,
             description: description,
             amount: amount,
-            date: date
+            date: date,
+            isPaid: false // NOVO: Inicializa como não paga
         };
 
         debts.push(newDebt);
@@ -174,11 +189,22 @@ document.addEventListener('DOMContentLoaded', () => {
         debtForm.reset();
     });
 
+    // 3. Excluir Dívida (Ações na Lista)
     debtList.addEventListener('click', (e) => {
+        const index = parseInt(e.target.dataset.index);
+
         if (e.target.classList.contains('delete-btn')) {
-            const indexToDelete = parseInt(e.target.dataset.index);
-            debts.splice(indexToDelete, 1);
-            saveDebts();
+            // Excluir
+            if (!isNaN(index)) {
+                debts.splice(index, 1);
+                saveDebts();
+            }
+        } else if (e.target.classList.contains('paid-checkbox')) {
+            // Marcar como Pago/Não Pago
+            if (!isNaN(index)) {
+                debts[index].isPaid = e.target.checked;
+                saveDebts();
+            }
         }
     });
 
